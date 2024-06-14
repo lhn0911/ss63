@@ -5,7 +5,7 @@ interface Article {
   id: number;
   title: string;
   image: string;
-  createdAt: string;
+  date: string; // Adjusted to match db.json structure
   status: string;
 }
 
@@ -19,11 +19,11 @@ export default function ArticlesList() {
   const [newArticle, setNewArticle] = useState<{
     title: string;
     image: string;
-    createdAt: string;
+    date: string; // Adjusted to match db.json structure
   }>({
     title: "",
     image: "",
-    createdAt: "",
+    date: "",
   });
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [showResetFormConfirm, setShowResetFormConfirm] =
@@ -33,7 +33,7 @@ export default function ArticlesList() {
 
   const fetchData = () => {
     axios
-      .get(`http://localhost:8080/Articles?title_like=${searchQuery}`)
+      .get(`http://localhost:3000/posts?title_like=${searchQuery}`)
       .then((response) => setArticles(response.data))
       .catch((error) => console.error("An error occurred.", error));
   };
@@ -60,10 +60,12 @@ export default function ArticlesList() {
     if (!currentArticle) return;
 
     const newStatus =
-      currentArticle.status === "Unpublished" ? "Published" : "Unpublished";
+      currentArticle.status === "Ngừng xuất bản"
+        ? "Đã xuất bản"
+        : "Ngừng xuất bản";
 
     axios
-      .patch(`http://localhost:8080/Articles/${currentArticle.id}`, {
+      .patch(`http://localhost:3000/posts/${currentArticle.id}`, {
         status: newStatus,
       })
       .then(() => {
@@ -90,14 +92,14 @@ export default function ArticlesList() {
   };
 
   const confirmResetForm = () => {
-    setNewArticle({ title: "", image: "", createdAt: "" });
+    setNewArticle({ title: "", image: "", date: "" });
     setShowResetFormConfirm(false);
   };
 
   const handlePublishArticle = () => {
     setErrorMsg("");
 
-    if (!newArticle.title || !newArticle.image || !newArticle.createdAt) {
+    if (!newArticle.title || !newArticle.image || !newArticle.date) {
       setErrorMsg("Title, image, and creation date cannot be empty");
       return;
     }
@@ -108,14 +110,14 @@ export default function ArticlesList() {
     }
 
     axios
-      .post("http://localhost:8080/Articles", {
+      .post("http://localhost:3000/posts", {
         ...newArticle,
-        status: "Published",
+        status: "Đã xuất bản",
       })
       .then((response) => {
         setArticles([...articles, response.data]);
         setShowCreateForm(false);
-        setNewArticle({ title: "", image: "", createdAt: "" });
+        setNewArticle({ title: "", image: "", date: "" });
       })
       .catch((error) => console.error("An error occurred.", error));
   };
@@ -193,11 +195,11 @@ export default function ArticlesList() {
                       alt={article.title}
                     />
                   </td>
-                  <td>{article.createdAt}</td>
+                  <td>{article.date}</td>
                   <td>
                     <span
                       className={`status ${
-                        article.status === "Unpublished"
+                        article.status === "Ngừng xuất bản"
                           ? "blocked"
                           : "published"
                       }`}
@@ -233,7 +235,7 @@ export default function ArticlesList() {
             <h2>Confirmation</h2>
             <p>
               Are you sure you want to{" "}
-              {currentArticle?.status === "Unpublished"
+              {currentArticle?.status === "Ngừng xuất bản"
                 ? "publish this article?"
                 : "unpublish this article?"}
             </p>
@@ -281,9 +283,9 @@ export default function ArticlesList() {
               Creation Date:
               <input
                 type="date"
-                value={newArticle.createdAt}
+                value={newArticle.date}
                 onChange={(e) =>
-                  setNewArticle({ ...newArticle, createdAt: e.target.value })
+                  setNewArticle({ ...newArticle, date: e.target.value })
                 }
               />
             </label>
