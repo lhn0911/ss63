@@ -1,0 +1,19 @@
+{
+    "posts": [
+      { 
+        "id": 1, 
+        "title": "State trong ReactJS", 
+        "image": "image1.png", 
+        "date": "04/03/2024", 
+        "status": "Đã xuất bản" 
+      },
+      { 
+        "id": 2, 
+        "title": "Tổng quan về ReactJS", 
+        "image": "image2.png", 
+        "date": "03/03/2024", 
+        "status": "Đã xuất bản" 
+      }
+    ]
+  }
+  
